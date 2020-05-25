@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.newly.vas.business.user.mapper.UserMapper">
+    <resultMap id="userResultMap" type="com.newly.vas.business.user.bean.UserDO">
+        <id column="ID" jdbcType="VARCHAR" property="id"/>
+        <result column="NAME" jdbcType="VARCHAR" property="name"/>
+        <result column="DEPT_ID" jdbcType="VARCHAR" property="deptId"/>
+        <result column="PASSWORD" jdbcType="VARCHAR" property="password"/>
+        <result column="REAL_NAME" jdbcType="VARCHAR" property="realName"/>
+        <result column="TYPE" jdbcType="VARCHAR" property="type"/>
+        <result column="POLICE_CODE" jdbcType="VARCHAR" property="policeCode"/>
+        <result column="ID_CARD" jdbcType="VARCHAR" property="idCard"/>
+        <result column="PHONE" jdbcType="VARCHAR" property="phone"/>
+        <result column="EMAIL" jdbcType="VARCHAR" property="email"/>
+        <result column="DEPT_NAME" jdbcType="VARCHAR" property="deptName"/>
+        <result column="LOGIN_TIMES" jdbcType="INTEGER" property="loginTimes"/>
+        <result column="SHORT_LETTER" jdbcType="VARCHAR"  property="shortLetter"/>
+        <result column="CREATE_USER_ID" jdbcType="VARCHAR" property="createUserId"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="LAST_LOGIN_TIME" jdbcType="TIMESTAMP" property="lastLoginTime"/>
+        <result column="REMARK" jdbcType="VARCHAR" property="remark"/>
+        <result column="USER_CODE" jdbcType="VARCHAR" property="userCode"/>
+        <association property="department" javaType="com.newly.vas.business.deptInfo.bean.DepartInfoDO">
+            <id column="D_ID" jdbcType="VARCHAR" property="id"/>
+            <result column="D_NAME" jdbcType="VARCHAR" property="name"></result>
+        </association>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        ID, DEPT_ID, NAME, REAL_NAME, `TYPE`, POLICE_CODE, SHORT_LETTER, ID_CARD,
+        PHONE, EMAIL, LOGIN_TIMES, CREATE_USER_ID, CREATE_TIME, UPDATE_TIME,
+        LAST_LOGIN_TIME, REMARK
+    </sql>
+
+    <sql id="User_Column_List">
+        u.ID, u.DEPT_ID, u.NAME, u.REAL_NAME, u.`TYPE`, u.POLICE_CODE, u.SHORT_LETTER,
+        u.ID_CARD, u.PHONE, u.EMAIL, u.LOGIN_TIMES, u.CREATE_USER_ID, u.CREATE_TIME, u.UPDATE_TIME,
+        u.LAST_LOGIN_TIME, u.REMARK
+    </sql>
+
+    <insert id="save" parameterType="com.newly.vas.business.user.bean.UserDO">
+        insert into vas_user_info (<include refid="Base_Column_List"/> , PASSWORD,USER_CODE)
+        values (
+         #{id}, #{deptId}
+        ,#{name} ,#{realName}
+        ,0
+        ,#{policeCode} ,#{shortLetter}
+        ,#{idCard}, #{phone,jdbcType=VARCHAR}
+        ,#{email}, 0
+        ,#{createUserId}, now()
+        ,now(), null
+        ,#{remark} , #{password},#{userCode})
+    </insert>
+
+    <insert id="batchSave" parameterType="java.util.List">
+        insert into vas_user_info (<include refid="Base_Column_List"/> , PASSWORD,USER_CODE) values
+        <foreach collection="users" item="item" index="index" separator=",">
+            (#{item.id}, #{item.deptId}
+            ,#{item.name} ,#{item.realName}
+            ,0
+            ,#{item.policeCode} ,#{item.shortLetter}
+            ,#{item.idCard}, #{item.phone}
+            ,#{item.email}, 0
+            ,#{item.createUserId}, now()
+            ,now(), null
+            , #{item.remark} , #{item.password}, #{item.userCode})
+        </foreach>
+    </insert>
+
+    <update id="update" parameterType="com.newly.vas.business.user.bean.UserDO">
+        update vas_user_info
+        <trim prefix="set" suffixOverrides=",">
+            <if test="name != null">
+                NAME = #{name, jdbcType=VARCHAR},
+            </if>
+            <if test="realName != null">
+                REAL_NAME = #{realName, jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                `TYPE` = #{type, jdbcType=INTEGER},
+            </if>
+            <if test="policeCode != null">
+                POLICE_CODE = #{policeCode, jdbcType=VARCHAR},
+            </if>
+            <if test="shortLetter != null">
+                SHORT_LETTER = #{shortLetter, jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                EMAIL = #{email, jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                PASSWORD = #{password, jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                PHONE = #{phone, jdbcType=VARCHAR},
+            </if>
+            <if test="idCard != null">
+                ID_CARD = #{idCard, jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                REMARK = #{remark, jdbcType=VARCHAR},
+            </if>
+            UPDATE_TIME = now(),
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="updatePhone" parameterType="java.lang.String">
+          update vas_user_info set PHONE=#{phone} where id=#{userId}
+    </update>
+
+    <update id="updateLoginInfo" parameterType="com.newly.vas.business.user.bean.UserDO">
+        update vas_user_info set LOGIN_TIMES = #{loginTimes, jdbcType=INTEGER},
+        LAST_LOGIN_TIME = now()
+        where id = #{id}
+    </update>
+
+    <update id="batchChangePassword">
+        update vas_user_info
+        set PASSWORD = #{password}
+        where ID in
+        <foreach collection="userIds" open="(" close=")" item="item" separator=",">
+            #{item}
+        </foreach>
+    </update>
+
+    <update id="batchMove">
+        update vas_user_info
+        set DEPT_ID = #{deptId}
+        where ID in
+        <foreach collection="userIds" open="(" close=")" item="item" separator=",">
+            #{item}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="java.lang.String">
+        delete from vas_user_info
+         where id = #{_parameter}
+    </delete>
+
+    <delete id="batchDelete">
+        delete from vas_user_info where ID in
+        <foreach collection="userIds" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+
+    <select id="getById" parameterType="java.lang.String" resultMap="userResultMap">
+        select
+        ID, NAME, REAL_NAME, `TYPE`, PHONE, CREATE_TIME, UPDATE_TIME, LOGIN_TIMES, LAST_LOGIN_TIME
+        from
+        vas_user_info
+        where ID = #{_parameter}
+    </select>
+
+    <select id="getByDeptId" parameterType="java.lang.String" resultMap="userResultMap">
+        select
+        ID, NAME, REAL_NAME, `TYPE`, PHONE, CREATE_TIME,UPDATE_TIME, LOGIN_TIMES, LAST_LOGIN_TIME
+        from
+        vas_user_info
+        where DEPT_ID = #{_parameter}
+    </select>
+
+    <select id="getCountByDeptId" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(*) from
+        vas_user_info
+        where DEPT_ID = #{_parameter}
+    </select>
+
+    <select id="getByName" parameterType="java.lang.String" resultMap="userResultMap">
+        select
+        ID, NAME, PASSWORD, `TYPE`, DEPT_ID, LOGIN_TIMES, LAST_LOGIN_TIME,USER_CODE
+        from
+        vas_user_info
+        where binary NAME = #{name}
+    </select>
+
+    <select id="getAll" resultMap="userResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from vas_user_info
+    </select>
+
+    <select id="getUserAndDept" parameterType="string" resultMap="userResultMap">
+        select
+        <include refid="User_Column_List"/>, d.ID as D_ID, d.NAME as D_NAME
+        from vas_user_info u, vas_department d
+        where u.DEPT_ID=d.ID and u.ID = #{userId}
+    </select>
+
+    <select id="getListByMap" parameterType="java.util.Map" resultMap="userResultMap">
+        select <include refid="Base_Column_List"/>
+        from
+        vas_user_info
+        <where>
+            <if test="id != null and id != ''"> and id = #{id} </if>
+            <if test="name != null and name != ''"> and name = #{name} </if>
+            <if test="createUserId != null and createUserId != ''"> and create_user_id = #{createUserId} </if>
+            <if test="createTime != null and createTime != ''"> and create_time = #{createTime} </if>
+            <if test="updateTime != null and updateTime != ''"> and update_time = #{updateTime} </if>
+            <if test="remark != null and remark != ''"> and remark = #{remark} </if>
+        </where>
+    </select>
+
+    <select id="getUsersByDeptIdAndRoleId" parameterType="java.util.Map" resultMap="userResultMap">
+      SELECT <include refid="User_Column_List"/>
+        FROM vas_user_info u
+        <where>
+            id IN (
+                SELECT DISTINCT USER_ID FROM vas_baas_user_role_map ur
+                <where>
+                    <if test="roleId != null and roleId != ''">
+                        and ur.`ROLE_ID` = #{roleId}
+                    </if>
+                </where>
+            )
+
+            <if test="deptIds != null and deptIds != ''"> and DEPT_ID in
+                <foreach collection="deptIds" item="item" open="(" close=")" separator=",">
+                    '${item}'
+                </foreach>
+            </if>
+            <if test="searchInfo != null and searchInfo != ''"> and (NAME like CONCAT('%','${searchInfo}','%' )
+                or u.REAL_NAME like CONCAT('%','${searchInfo}','%' ))
+            </if>
+        </where>
+    </select>
+
+    <select id="getPageList" parameterType="java.util.Map" resultMap="userResultMap">
+        select <include refid="User_Column_List"/>, d.NAME as DEPT_NAME
+        from
+        vas_user_info u, vas_department d
+        <where>
+            <if test="deptIds != null and deptIds != ''"> and DEPT_ID in
+                <foreach collection="deptIds" item="item" open="(" close=")" separator=",">
+                  '${item}'
+                </foreach>
+            </if>
+            <if test="createUserId != null and createUserId != ''"> and u.CREATE_USER_ID = #{createUserId} </if>
+            <if test="createTime != null and createTime != ''"> and u.CREATE_TIME = #{createTime} </if>
+            <if test="updateTime != null and updateTime != ''"> and u.UPDATE_TIME = #{updateTime} </if>
+            <if test="loginTimes != null and loginTimes != ''"> and u.LOGIN_TIMES = #{loginTimes} </if>
+            <if test="lastLoginTime != null and lastLoginTime != ''"> and u.LAST_LOGIN_TIME = #{lastLoginTime} </if>
+            <if test="searchInfo != null and searchInfo != ''"> and (u.NAME like CONCAT('%','${searchInfo}','%' )
+                or u.REAL_NAME like CONCAT('%','${searchInfo}','%' )
+                or u.POLICE_CODE like CONCAT('%','${searchInfo}','%' ))
+            </if>
+            and u.DEPT_ID=d.ID
+        </where>
+        order by ${orderBy} ${orderType}
+        limit ${offset},${pageSize}
+    </select>
+
+    <select id="getPageCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select
+        count(*)
+        from
+        vas_user_info
+        <where>
+            <if test="deptIds != null and deptIds != ''"> and DEPT_ID in
+                <foreach collection="deptIds" item="deptId" open="(" close=")" separator=",">
+                    '${deptId}'
+                </foreach>
+            </if>
+            <if test="searchInfo != null and searchInfo != ''"> and (NAME like CONCAT('%','${searchInfo}','%' )
+                or REAL_NAME like CONCAT('%','${searchInfo}','%' )
+                or POLICE_CODE like CONCAT('%','${searchInfo}','%' )) </if>
+        </where>
+    </select>
+
+    <select id="getSumLoginTimes" resultType="java.lang.Integer">
+        select SUM(LOGIN_TIMES) from vas_user_info
+    </select>
+
+    <select id="phoneCount" parameterType="Hashmap" resultType="int">
+        select count(1) from vas_user_info u where u.PHONE=#{phone}
+    </select>
+    <select id="idCardCount" parameterType="Hashmap" resultType="int">
+        select count(1) from vas_user_info u where u.ID_CARD=#{idCard}
+    </select>
+    <select id="nameCount" parameterType="Hashmap" resultType="int">
+        select count(1) from vas_user_info u where u.`NAME`=#{name}
+    </select>
+    <select id="emailCount" parameterType="Hashmap" resultType="int">
+        select count(1) from vas_user_info u where u.EMAIL=#{email}
+    </select>
+
+
+    <insert id="saveLog" parameterType="com.newly.vas.business.login.bean.SysLogBO" >
+    INSERT INTO `vas_log`(`CREATE_TIME`, `remark`,user_name,session_id )
+    VALUES ( #{createDate},#{remark},#{userName},#{sessionId})
+    </insert>
+
+</mapper>

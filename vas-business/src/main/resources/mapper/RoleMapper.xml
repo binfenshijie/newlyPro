@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newly.vas.business.role.mapper.RoleMapper">
+    <resultMap id="roleMapper" type="com.newly.vas.business.role.bean.RoleDO">
+        <id property="id" column="ID"/>
+        <result property="name" column="NAME"/>
+        <result property="isSystem" column="IS_SYSTEM"/>
+        <result property="createUserId" column="CREATE_USER_ID"/>
+        <result property="createTime" column="CREATE_TIME" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="UPDATE_TIME" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result property="remark" column="REMARK"/>
+        <result property="userCode" column="USER_CODE"/>
+    </resultMap>
+
+    <resultMap id="appMapper" type="com.newly.vas.business.role.bean.AppDO">
+        <id property="id" column="ID"/>
+        <result property="appCode" column="APP_CODE"/>
+        <result property="appName" column="APP_NAME"/>
+        <result property="appLogoBase64" column="APP_LOGO_BASE64"/>
+        <result property="createTime" column="CREATE_TIME" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="UPDATE_TIME" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap id="resTreeMapper" type="com.newly.vas.business.role.bean.ResTreeDO">
+        <id property="id" column="ID"/>
+        <result property="treeNode" column="TREE_NODE"/>
+        <result property="name" column="NAME"/>
+        <result property="parentTreeNode" column="PARENT_TREE_NODE"/>
+        <result property="createTime" column="CREATE_TIME" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="UPDATE_TIME" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result property="org_num" column="ORG_NUM"/>
+        <result property="remark" column="REMARK"/>
+    </resultMap>
+
+    <resultMap id="menuMapper" type="com.newly.vas.business.role.bean.MenuDO">
+        <id property="id" column="ID"/>
+        <result property="name" column="NAME"/>
+        <result property="menuCode" column="MENU_CODE"/>
+        <result property="pathName" column="PATH_NAME"/>
+        <result property="icon" column="ICON"/>
+        <result property="appCode" column="APP_CODE"/>
+        <result property="type" column="TYPE"/>
+        <result property="parentId" column="PARENT_ID"/>
+    </resultMap>
+
+    <insert id="save" parameterType="com.newly.vas.business.role.bean.RoleDO">
+        insert into VAS_BAAS_ROLE (
+            `ID`,`NAME`,`IS_SYSTEM`,`CREATE_USER_ID`,`CREATE_TIME`,`UPDATE_TIME`,`REMARK`,`USER_CODE`
+        )
+        values (
+            #{id},#{name},0,#{createUserId},now(),now(),#{remark},#{userCode}
+        )
+    </insert>
+
+    <insert id="batchInsertRoleMenu" parameterType="java.util.List">
+        insert into VAS_BAAS_ROLE_MENU_MAP (
+            `ROLE_ID`,`APP_CODE`,`MENU_ID`
+        )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.roleId},#{item.appCode},#{item.menuId})
+        </foreach>
+    </insert>
+
+    <insert id="batchInsertRoleResTree" parameterType="java.util.List">
+        insert into VAS_BAAS_ROLE_RES_MAP (
+            `ROLE_ID`,`TREE_NODE`
+        )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.roleId},#{item.treeNode})
+        </foreach>
+    </insert>
+
+    <insert id="batchInsertRoleGatewayTree" parameterType="java.util.List">
+        insert into vas_baas_res_tree (
+            `ROLE_ID`,`GATEWAY_ID`
+        )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.roleId},#{item.gateWayId})
+        </foreach>
+    </insert>
+
+    <insert id="batchInsertRoleUser" parameterType="java.util.List">
+        insert into VAS_BAAS_USER_ROLE_MAP (
+            `USER_ID`,`ROLE_ID`
+        )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.userId},#{item.roleId})
+        </foreach>
+    </insert>
+
+    <update id="update" parameterType="com.newly.vas.business.role.bean.RoleDO">
+        update VAS_BAAS_ROLE
+            <trim prefix="set" suffixOverrides=",">
+                <if test="name != null"> `NAME` = #{name}, </if>
+                <if test="remark != null"> `REMARK` = #{remark}, </if>
+                `UPDATE_TIME` = now(),
+            </trim>
+        <where>
+            and `ID` = #{id}
+        </where>
+    </update>
+
+    <delete id="delete" parameterType="java.lang.String">
+        delete from VAS_BAAS_ROLE
+        <where>
+            and `ID` = #{_parameter}
+        </where>
+    </delete>
+
+    <delete id="deleteList" parameterType="java.util.List">
+        delete from VAS_BAAS_ROLE
+        <where>
+            and `ID` in
+            <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </where>
+    </delete>
+
+    <delete id="deleteRoleMenuByRoleId" parameterType="java.util.List">
+        delete from VAS_BAAS_ROLE_MENU_MAP
+        <where>
+            and `ROLE_ID` in
+            <foreach collection="list" item="item" open="(" close=")" separator=",">
+                '${item}'
+            </foreach>
+        </where>
+    </delete>
+
+    <delete id="deleteRoleResTreeByRoleId" parameterType="java.util.List">
+        delete from VAS_BAAS_ROLE_RES_MAP
+        <where>
+            and `ROLE_ID` in
+            <foreach collection="list" item="item" open="(" close=")" separator=",">
+                '${item}'
+            </foreach>
+        </where>
+    </delete>
+
+    <delete id="deleteRoleUserByRoleId" parameterType="java.util.List">
+        delete from VAS_BAAS_USER_ROLE_MAP
+        <where>
+            and `ROLE_ID` in
+            <foreach collection="list" item="item" open="(" close=")" separator=",">
+                '${item}'
+            </foreach>
+        </where>
+    </delete>
+
+    <delete id="deleteRoleUserByUserId" parameterType="java.lang.String">
+        delete from VAS_BAAS_USER_ROLE_MAP
+        <where>
+            and `USER_ID` = #{_parameter}
+        </where>
+    </delete>
+
+    <select id="getById" parameterType="java.lang.String" resultMap="roleMapper">
+        select
+            `ID`,`NAME`,`IS_SYSTEM`,`CREATE_USER_ID`,`CREATE_TIME`,`UPDATE_TIME`,`REMARK`
+        from
+            VAS_BAAS_ROLE
+        <where>
+            and `ID` = #{_parameter}
+        </where>
+    </select>
+
+    <select id="getListByMap" parameterType="java.util.Map" resultMap="roleMapper">
+        select
+            `ID`,`NAME`,`IS_SYSTEM`,`CREATE_USER_ID`,`CREATE_TIME`,`UPDATE_TIME`,`REMARK`,`USER_CODE`
+        from
+            VAS_BAAS_ROLE
+        <where>
+            <if test="id != null and id != ''"> and `ID` = #{id} </if>
+            <if test="name != null and name != ''"> and `NAME` like CONCAT('%','${name}','%') </if>
+            <if test="isSystem != null and isSystem != ''"> and `IS_SYSTEM` = #{isSystem} </if>
+            <if test="userId != null and userId != ''"> and `CREATE_USER_ID` = #{userId} </if>
+            <if test="createTime != null and createTime != ''"> and `CREATE_TIME` = #{createTime} </if>
+            <if test="updateTime != null and updateTime != ''"> and `UPDATE_TIME` = #{updateTime} </if>
+            <if test="remark != null and remark != ''"> and `REMARK` = #{remark} </if>
+            <if test="userCode != null and userCode != ''"> and `USER_CODE` = #{userCode} </if>
+        </where>
+    </select>
+
+    <select id="getPageList" parameterType="java.util.Map" resultMap="roleMapper">
+        select
+            `ID`,`NAME`,`IS_SYSTEM`,`CREATE_USER_ID`,`CREATE_TIME`,`UPDATE_TIME`,`REMARK`,`USER_CODE`
+        from
+            VAS_BAAS_ROLE
+        <where>
+            <if test="id != null and id != ''"> and `ID` = #{id} </if>
+            <if test="name != null and name != ''"> and `NAME` like CONCAT('%','${name}','%') </if>
+            <if test="isSystem != null and isSystem != ''"> and `IS_SYSTEM` = #{isSystem} </if>
+            <if test="createUserId != null and createUserId != ''"> and `CREATE_USER_ID` = #{createUserId} </if>
+            <if test="createTime != null and createTime != ''"> and `CREATE_TIME` = #{createTime} </if>
+            <if test="updateTime != null and updateTime != ''"> and `UPDATE_TIME` = #{updateTime} </if>
+            <if test="remark != null and remark != ''"> and `REMARK` = #{remark} </if>
+            <if test="userCode != null and userCode != ''"> and `USER_CODE` = #{userCode} </if>
+            <if test="userId != null and userId != ''"> and `CREATE_USER_ID` = #{userId} </if>
+        </where>
+        order by ${orderBy} ${orderType}
+        limit ${offset},${pageSize}
+    </select>
+
+    <select id="getPageCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select
+            count(*)
+        from
+            VAS_BAAS_ROLE
+        <where>
+            <if test="id != null and id != ''"> and `ID` = #{id} </if>
+            <if test="name != null and name != ''"> and `NAME` like CONCAT('%','${name}','%' ) </if>
+            <if test="isSystem != null and isSystem != ''"> and `IS_SYSTEM` = #{isSystem} </if>
+            <if test="createUserId != null and createUserId != ''"> and `CREATE_USER_ID` = #{createUserId} </if>
+            <if test="createTime != null and createTime != ''"> and `CREATE_TIME` = #{createTime} </if>
+            <if test="updateTime != null and updateTime != ''"> and `UPDATE_TIME` = #{updateTime} </if>
+            <if test="remark != null and remark != ''"> and `REMARK` = #{remark} </if>
+            <if test="userCode != null and userCode != ''"> and `USER_CODE` = #{userCode} </if>
+            <if test="userId != null and userId != ''"> and `CREATE_USER_ID` = #{userId} </if>
+        </where>
+    </select>
+
+    <select id="getRelatedUserByRoleId" parameterType="java.lang.String" resultType="com.newly.common.bean.CommonKeyBO">
+        select
+            ur.`USER_ID` as id,
+            u.`NAME` as name
+        from
+            VAS_BAAS_USER_ROLE_MAP ur
+        left join
+            vas_user_info u
+        on
+            ur.`USER_ID` = u.`ID`
+        <where>
+            and ur.`ROLE_ID` = #{roleId}
+            and u.USER_CODE=#{userCode}
+        </where>
+    </select>
+
+    <select id="getRelatedRoleByUserId" parameterType="java.lang.String" resultType="com.newly.vas.business.role.bean.RoleDO">
+        select
+            r.`ID` as id,r.`NAME` as name,r.`CREATE_USER_ID` as createUserId,r.`CREATE_TIME` as createTime,r.`UPDATE_TIME` as updateTime,r.`REMARK` as remark
+        from
+            VAS_BAAS_USER_ROLE_MAP ur
+        left join
+            VAS_BAAS_ROLE r
+        on
+            ur.`ROLE_ID` = r.`ID`
+        <where>
+            and ur.USER_ID = #{userId}
+            and r.USER_CODE=#{userCode}
+        </where>
+    </select>
+
+    <select id="getRelatedMenu" parameterType="java.util.Map" resultType="java.lang.String">
+        select
+            rm.`MENU_ID`
+        from
+            VAS_BAAS_ROLE_MENU_MAP rm
+        <where>
+            and rm.ROLE_ID = #{roleId}
+            and rm.`APP_CODE` = #{appCode}
+        </where>
+    </select>
+
+    <select id="getRelatedResTreeByRoleId" parameterType="java.lang.String" resultType="java.lang.String">
+        select
+            rr.`TREE_NODE`
+        from
+            VAS_BAAS_ROLE_RES_MAP rr
+        <where>
+            and rr.ROLE_ID = #{_parameter}
+        </where>
+    </select>
+
+    <select id="getNodeId" parameterType="java.lang.String" resultType="java.lang.String">
+        select
+        rr.`TREE_NODE`
+        from
+        VAS_BAAS_ROLE_RES_MAP rr
+        <where>
+            and rr.ROLE_ID = #{roleId}
+        </where>
+    </select>
+
+    <select id="getGateWayId" parameterType="java.lang.String" resultType="java.lang.String">
+        select
+        rr.`GATEWAY_ID`
+        from
+        vas_baas_res_tree rr
+        <where>
+            and rr.ROLE_ID = #{roleId}
+        </where>
+    </select>
+
+
+    <select id="getUserCountByRoleIdList" parameterType="java.util.List" resultType="java.lang.Integer">
+        select
+            count(*)
+        from
+            VAS_BAAS_USER_ROLE_MAP
+        <where>
+            and `ROLE_ID` in
+            <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </where>
+    </select>
+
+    <select id="existsUserRole" parameterType="com.newly.vas.business.role.bean.RoleUserDO" resultType="java.lang.Integer">
+        select
+            count(*)
+        from
+            VAS_BAAS_USER_ROLE_MAP
+        <where>
+            and `USER_ID` = #{userId} and `ROLE_ID` = #{roleId}
+        </where>
+    </select>
+
+    <select id="getListByMaps" parameterType="java.util.Map" resultMap="appMapper">
+        select
+        `ID`,`APP_CODE`,`APP_NAME`,`CREATE_TIME`,`UPDATE_TIME`
+        from
+        VAS_BAAS_APP
+        <where>
+            <if test="id != null and id != ''"> and `ID` = #{id} </if>
+            <if test="appCode != null and appCode != ''"> and `APP_CODE` = #{appCode} </if>
+            <if test="appName != null and appName != ''"> and `APP_NAME` = #{appName} </if>
+            <if test="createTime != null and createTime != ''"> and `CREATE_TIME` = #{createTime} </if>
+            <if test="updateTime != null and updateTime != ''"> and `UPDATE_TIME` = #{updateTime} </if>
+        </where>
+    </select>
+
+    <select id="getListMenu" parameterType="java.util.Map" resultType="com.newly.vas.business.role.bean.MenuDO">
+        select
+        distinct m.`ID` as id,m.`NAME` as name,m.`MENU_CODE` as menuCode,m.`PATH_NAME` as pathName,m.`ICON` as icon,a.`APP_NAME` as appName,m.`APP_CODE` as appCode,m.`TYPE` as type,m.`PARENT_ID` as parentId
+        from
+        VAS_MENU m
+        left join
+        VAS_BAAS_APP a
+        on
+        m.`APP_CODE` = a.`APP_CODE`
+        left join vas_baas_role_menu_map v on m.id=v.menu_id
+        <where>
+            <if test="id != null and id != ''"> and m.`ID` = #{id} </if>
+            <if test="name != null and name != ''"> and m.`NAME` = #{name} </if>
+            <if test="menuCode != null and menuCode != ''"> and m.`MENU_CODE` = #{menuCode} </if>
+            <if test="pathName != null and pathName != ''"> and m.`PATH_NAME` = #{pathName} </if>
+            <if test="icon != null and icon != ''"> and m.`ICON` = #{icon} </if>
+            <if test="appCode != null and appCode != ''"> and m.`APP_CODE` = #{appCode} </if>
+            <if test="type != null and type != ''"> and m.`TYPE` = #{type} </if>
+            <if test="parentId != null and parentId != ''"> and m.`PARENT_ID` = #{parentId} </if>
+            and v.role_id=#{roleId}
+        </where>
+        order by `ID`
+    </select>
+
+    <select id="getTreeListByAppCode" parameterType="java.util.Map" resultMap="resTreeMapper">
+        select
+        `ID`,`TREE_NODE`,`NAME`,`PARENT_TREE_NODE`,`CREATE_TIME`,`UPDATE_TIME`,`ORG_NUM`,`REMARK`
+        from
+        VAS_BAAS_RES_TREE
+        <where>
+            <if test="id != null and id != ''"> and `ID` = #{id} </if>
+            <if test="nodeList != null">
+                and `TREE_NODE` in
+                <foreach collection="nodeList" item="item" open="(" close=")" separator=",">
+                    '${item}'
+                </foreach>
+            </if>
+            <if test="treeNode != null and treeNode != ''"> and `TREE_NODE` = #{treeNode} </if>
+            <if test="name != null and name != ''"> and `NAME` = #{name} </if>
+            <if test="parentTreeNode != null and parentTreeNode != ''"> and `PARENT_TREE_NODE` = #{parentTreeNode} </if>
+            <if test="createTime != null and createTime != ''"> and `CREATE_TIME` = #{createTime} </if>
+            <if test="updateTime != null and updateTime != ''"> and `UPDATE_TIME` = #{updateTime} </if>
+            <if test="remark != null and remark != ''"> and `REMARK` = #{remark} </if>
+        </where>
+    </select>
+
+    <select id="getRelatedMenuByRoleList" parameterType="java.util.Map" resultType="java.lang.String">
+        select
+        distinct `MENU_ID`
+        from
+        VAS_BAAS_ROLE_MENU_MAP
+        <where>
+            and `ROLE_ID` in
+            <foreach collection="roleList" item="item" separator="," open="(" close=")">
+                '${item.id}'
+            </foreach>
+            and `APP_CODE` = #{appCode}
+        </where>
+        order by MENU_ID
+    </select>
+
+
+    <select id="getListByMapa" parameterType="java.util.Map" resultType="com.newly.vas.business.role.bean.MenuDO">
+        select
+        m.`ID` as id,m.`NAME` as name,m.`MENU_CODE` as menuCode,m.`PATH_NAME` as pathName,m.`ICON` as icon,a.`APP_NAME` as appName,m.`APP_CODE` as appCode,m.`TYPE` as type,m.`PARENT_ID` as parentId
+        from
+        VAS_MENU m
+        left join
+        VAS_BAAS_APP a
+        on
+        m.`APP_CODE` = a.`APP_CODE`
+        <where>
+            <if test="id != null and id != ''"> and m.`ID` = #{id} </if>
+            <if test="name != null and name != ''"> and m.`NAME` = #{name} </if>
+            <if test="menuCode != null and menuCode != ''"> and m.`MENU_CODE` = #{menuCode} </if>
+            <if test="pathName != null and pathName != ''"> and m.`PATH_NAME` = #{pathName} </if>
+            <if test="icon != null and icon != ''"> and m.`ICON` = #{icon} </if>
+            <if test="appCode != null and appCode != ''"> and m.`APP_CODE` = #{appCode} </if>
+            <if test="type != null and type != ''"> and m.`TYPE` = #{type} </if>
+            <if test="parentId != null and parentId != ''"> and m.`PARENT_ID` = #{parentId} </if>
+        </where>
+        order by `ID`
+    </select>
+
+
+    <select id="getMenuByList" parameterType="java.util.Map" resultMap="menuMapper">
+        select
+        `ID`,`NAME`,`MENU_CODE`,`PATH_NAME`,`ICON`,`APP_CODE`,`TYPE`,`PARENT_ID`
+        from
+        VAS_MENU
+        <where>
+            and `id` in
+            <foreach collection="menuList" item="item" open="(" close=")" separator=",">
+                '${item}'
+            </foreach>
+            <if test="parentId != null and parentId != ''">
+                and `PARENT_ID` = #{parentId}
+            </if>
+            <if test="type != null and type != ''">
+                and `TYPE` = #{type}
+            </if>
+        </where>
+    </select>
+
+    <select id="getcount" parameterType="HashMap" resultType="int">
+        SELECT count(*) FROM `vas_baas_role` where name=#{name} and user_code=#{userCode}
+    </select>
+</mapper>

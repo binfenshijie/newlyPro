@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newly.vas.business.login.mapper.LoginInfoMapper">
+    <resultMap id="loginInfoMapper" type="com.newly.vas.business.login.bean.LoginInfoDO">
+        <id property="id" column="ID"/>
+        <result property="userName" column="USER_NAME"/>
+        <result property="userCode" column="USER_CODE"/>
+        <result property="sessionId" column="SESSION_ID"/>
+        <result property="ip" column="IP"/>
+        <result property="country" column="COUNTRY"/>
+        <result property="area" column="AREA"/>
+        <result property="region" column="REGION"/>
+        <result property="city" column="CITY"/>
+        <result property="county" column="COUNTY"/>
+        <result property="isp" column="ISP"/>
+        <result property="countryId" column="COUNTRY_ID"/>
+        <result property="areaId" column="AREA_ID"/>
+        <result property="regionId" column="REGION_ID"/>
+        <result property="cityId" column="CITY_ID"/>
+        <result property="countyId" column="COUNTY_ID"/>
+        <result property="ispId" column="ISP_ID"/>
+        <result property="loginTime" column="LOGIN_TIME" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result property="remark" column="REMARK"/>
+    </resultMap>
+
+    <insert id="save" parameterType="com.newly.vas.business.login.bean.LoginInfoDO">
+        insert into VAS_USER_LOGIN_INFO (
+            `ID`,
+            `USER_NAME`,
+            `USER_CODE`,
+            `SESSION_ID`,
+            `IP`,
+            `COUNTRY`,
+            `AREA`,
+            `REGION`,
+            `CITY`,
+            `COUNTY`,
+            `ISP`,
+            `COUNTRY_ID`,
+            `AREA_ID`,
+            `REGION_ID`,
+            `CITY_ID`,
+            `COUNTY_ID`,
+            `ISP_ID`,
+            `LOGIN_TIME`,
+            `REMARK`
+        )
+        values (
+            #{id},
+            #{userName},
+            #{userCode},
+            #{sessionId},
+            #{ip},
+            #{country},
+            #{area},
+            #{region},
+            #{city},
+            #{county},
+            #{isp},
+            #{countryId},
+            #{areaId},
+            #{regionId},
+            #{cityId},
+            #{countyId},
+            #{ispId},
+            now(),
+            #{remark}
+        )
+    </insert>
+
+    <select id="getListByMap" parameterType="java.util.Map" resultMap="loginInfoMapper">
+        select
+        `ID`,
+        `USER_NAME`,
+        `USER_CODE`,
+        `SESSION_ID`,
+        `IP`,
+        `COUNTRY`,
+        `AREA`,
+        `REGION`,
+        `CITY`,
+        `COUNTY`,
+        `ISP`,
+        `COUNTRY_ID`,
+        `AREA_ID`,
+        `REGION_ID`,
+        `CITY_ID`,
+        `COUNTY_ID`,
+        `ISP_ID`,
+        `LOGIN_TIME`,
+        `REMARK`
+        from
+        VAS_USER_LOGIN_INFO
+        <where>
+            <if test="id != null and id != ''">and `ID` = #{id}</if>
+            <if test="userName != null and userName != ''">and `USER_NAME` = #{userName}</if>
+            <if test="userCode != null and userCode != ''">and `USER_CODE` = #{userCode}</if>
+            <if test="sessionId != null and sessionId != ''">and `SESSION_ID` = #{sessionId}</if>
+            <if test="ip != null and ip != ''">and `IP` = #{ip}</if>
+            <if test="country != null and country != ''">and `COUNTRY` = #{country}</if>
+            <if test="area != null and area != ''">and `AREA` = #{area}</if>
+            <if test="region != null and region != ''">and `REGION` = #{region}</if>
+            <if test="city != null and city != ''">and `CITY` = #{city}</if>
+            <if test="county != null and county != ''">and `COUNTY` = #{county}</if>
+            <if test="isp != null and isp != ''">and `ISP` = #{isp}</if>
+            <if test="countryId != null and countryId != ''">and `COUNTRY_ID` = #{countryId}</if>
+            <if test="areaId != null and areaId != ''">and `AREA_ID` = #{areaId}</if>
+            <if test="regionId != null and regionId != ''">and `REGION_ID` = #{regionId}</if>
+            <if test="cityId != null and cityId != ''">and `CITY_ID` = #{cityId}</if>
+            <if test="countyId != null and countyId != ''">and `COUNTY_ID` = #{countyId}</if>
+            <if test="ispId != null and ispId != ''">and `ISP_ID` = #{ispId}</if>
+            <if test="startTime != null">and `LOGIN_TIME` &gt;= #{startTime}</if>
+            <if test="endTime != null">and `LOGIN_TIME` &lt;= #{endTime}</if>
+            <if test="remark != null and remark != ''">and `REMARK` = #{remark}</if>
+        </where>
+    </select>
+
+    <select id="getPageList" parameterType="java.util.Map" resultMap="loginInfoMapper">
+        select
+        `ID`,
+        `USER_NAME`,
+        `USER_CODE`,
+        `SESSION_ID`,
+        `IP`,
+        `COUNTRY`,
+        `AREA`,
+        `REGION`,
+        `CITY`,
+        `COUNTY`,
+        `ISP`,
+        `COUNTRY_ID`,
+        `AREA_ID`,
+        `REGION_ID`,
+        `CITY_ID`,
+        `COUNTY_ID`,
+        `ISP_ID`,
+        `LOGIN_TIME`,
+        `REMARK`
+        from
+        VAS_USER_LOGIN_INFO
+        <where>
+            <if test="id != null and id != ''">and `ID` = #{id}</if>
+            <if test="userName != null and userName != ''">and `USER_NAME` = #{userName}</if>
+            <if test="userCode != null and userCode != ''">and `USER_CODE` = #{userCode}</if>
+            <if test="sessionId != null and sessionId != ''">and `SESSION_ID` = #{sessionId}</if>
+            <if test="ip != null and ip != ''">and `IP` = #{ip}</if>
+            <if test="country != null and country != ''">and `COUNTRY` = #{country}</if>
+            <if test="area != null and area != ''">and `AREA` = #{area}</if>
+            <if test="region != null and region != ''">and `REGION` = #{region}</if>
+            <if test="city != null and city != ''">and `CITY` = #{city}</if>
+            <if test="county != null and county != ''">and `COUNTY` = #{county}</if>
+            <if test="isp != null and isp != ''">and `ISP` = #{isp}</if>
+            <if test="countryId != null and countryId != ''">and `COUNTRY_ID` = #{countryId}</if>
+            <if test="areaId != null and areaId != ''">and `AREA_ID` = #{areaId}</if>
+            <if test="regionId != null and regionId != ''">and `REGION_ID` = #{regionId}</if>
+            <if test="cityId != null and cityId != ''">and `CITY_ID` = #{cityId}</if>
+            <if test="countyId != null and countyId != ''">and `COUNTY_ID` = #{countyId}</if>
+            <if test="ispId != null and ispId != ''">and `ISP_ID` = #{ispId}</if>
+            <if test="startTime != null">and `LOGIN_TIME` &gt;= #{startTime}</if>
+            <if test="endTime != null">and `LOGIN_TIME` &lt;= #{endTime}</if>
+            <if test="remark != null and remark != ''">and `REMARK` = #{remark}</if>
+        </where>
+        order by ${orderBy} ${orderType}
+        limit ${offset},${pageSize}
+    </select>
+
+    <select id="getPageCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select
+            count(*)
+        from
+            VAS_USER_LOGIN_INFO
+        <where>
+        <if test="id != null and id != ''">and `ID` = #{id}</if>
+        <if test="userName != null and userName != ''">and `USER_NAME` = #{userName}</if>
+        <if test="userCode != null and userCode != ''">and `USER_CODE` = #{userCode}</if>
+        <if test="sessionId != null and sessionId != ''">and `SESSION_ID` = #{sessionId}</if>
+        <if test="ip != null and ip != ''">and `IP` = #{ip}</if>
+        <if test="country != null and country != ''">and `COUNTRY` = #{country}</if>
+        <if test="area != null and area != ''">and `AREA` = #{area}</if>
+        <if test="region != null and region != ''">and `REGION` = #{region}</if>
+        <if test="city != null and city != ''">and `CITY` = #{city}</if>
+        <if test="county != null and county != ''">and `COUNTY` = #{county}</if>
+        <if test="isp != null and isp != ''">and `ISP` = #{isp}</if>
+        <if test="countryId != null and countryId != ''">and `COUNTRY_ID` = #{countryId}</if>
+        <if test="areaId != null and areaId != ''">and `AREA_ID` = #{areaId}</if>
+        <if test="regionId != null and regionId != ''">and `REGION_ID` = #{regionId}</if>
+        <if test="cityId != null and cityId != ''">and `CITY_ID` = #{cityId}</if>
+        <if test="countyId != null and countyId != ''">and `COUNTY_ID` = #{countyId}</if>
+        <if test="ispId != null and ispId != ''">and `ISP_ID` = #{ispId}</if>
+        <if test="startTime != null">and `LOGIN_TIME` &gt;= #{startTime}</if>
+        <if test="endTime != null">and `LOGIN_TIME` &lt;= #{endTime}</if>
+        <if test="remark != null and remark != ''">and `REMARK` = #{remark}</if>
+        </where>
+    </select>
+</mapper>

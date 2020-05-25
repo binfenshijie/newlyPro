@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newly.vas.business.userInfo.mapper.UserInfoMapper">
+    <resultMap id="userInfoMapper" type="com.newly.vas.business.userInfo.bean.UserInfoDO">
+        <id property="id" column="ID"/>
+        <result property="groupId" column="GROUP_ID"/>
+        <result property="deptId" column="DEPT_ID"/>
+        <result property="createUserId" column="CREATE_USER_ID"/>
+        <result property="name" column="NAME"/>
+        <result property="realName" column="REAL_NAME"/>
+        <result property="deptName" column="DEPT_NAME"/>
+        <result property="wxName" column="WX_NAME"/>
+        <result property="nickName" column="NICK_NAME"/>
+        <result property="password" column="PASSWORD"/>
+        <result property="phone" column="PHONE"/>
+        <result property="email" column="EMAIL"/>
+        <result property="idCard" column="ID_CARD"/>
+        <result property="image" column="IMAGE"/>
+        <result property="headerImg" column="HEADER_IMG"/>
+        <result property="type" column="TYPE"/>
+        <result property="loginTimes" column="LOGIN_TIMES"/>
+        <result property="lastLoginIp" column="LAST_LOGIN_IP"/>
+        <result property="lastLoginTime" column="LAST_LOGIN_TIME"/>
+        <result property="createTime" column="CREATE_TIME"/>
+        <result property="updateTime" column="UPDATE_TIME"/>
+        <result property="remark" column="REMARK"/>
+        <result property="userCode" column="USER_CODE"  />
+        <result property="iszuhu" column="ISZUHU"  />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+         `ID`,`GROUP_ID`,`DEPT_ID`, `CREATE_USER_ID`, `REAL_NAME`, `NAME`,`WX_NAME`,`NICK_NAME`,`PASSWORD`,`PHONE`,`EMAIL`,
+         `ID_CARD`,`IMAGE`,`HEADER_IMG`,`TYPE`,`LOGIN_TIMES`,`LAST_LOGIN_IP`,
+         `LAST_LOGIN_TIME`,`CREATE_TIME`,`UPDATE_TIME`,`REMARK`
+    </sql>
+
+    <sql id="User_Column_List">
+         u.`ID`, u.`GROUP_ID`, u.`DEPT_ID`, u.`CREATE_USER_ID`, u.`REAL_NAME`, u.`NAME`, u.`WX_NAME`, u.`NICK_NAME`, u.`PHONE`, u.`EMAIL`,
+         u.`ID_CARD`, u.`IMAGE`, u.`HEADER_IMG`, u.`TYPE`, u.`LOGIN_TIMES`, u.`LAST_LOGIN_IP`,
+         u.`LAST_LOGIN_TIME`, u.`CREATE_TIME`, u.`UPDATE_TIME`, u.`REMARK`
+    </sql>
+
+    <insert id="save" parameterType="com.newly.vas.business.userInfo.bean.UserInfoDO">
+        insert into VAS_USER_INFO (<include refid="Base_Column_List"/>)
+        values (
+            #{id},#{groupId},#{deptId}, #{createUserId}, #{realName}, #{name},#{wxName},#{nickName},#{password},#{phone},#{email},#{idCard},#{image},#{headerImg},#{type},0,#{lastLoginIp},#{lastLoginTime},now(),now(),#{remark}
+        )
+    </insert>
+
+    <insert id="saveResPermission" parameterType="java.lang.String">
+        insert into vas_user_res_map (USER_ID, TREE_NODES )
+         values (#{userId}, #{treeNodes})
+    </insert>
+
+    <insert id="saveMenuPermission" parameterType="java.lang.String">
+        insert into vas_user_func_map  (USER_ID, MENU_CODES)
+       values (#{userId}, #{menuCodes})
+    </insert>
+
+    <update id="updateResPermission" parameterType="java.lang.String">
+    update  vas_user_res_map set   TREE_NODES = #{treeNodes}
+         where user_id = #{USER_ID}
+    </update>
+
+    <update id="updateMenuPermission" parameterType="java.lang.String">
+        update vas_user_func_map  set   MENU_CODES = #{menuCodes}
+       where user_id = #{USER_ID}
+    </update>
+
+    <delete id="deleteMenuPermission" parameterType="java.lang.String">
+        delete from vas_user_func_map
+            <where>
+                and `USER_ID` = #{_parameter}
+            </where>
+    </delete>
+
+    <delete id="deleteResPermission" parameterType="java.lang.String">
+        delete from vas_user_res_map
+        <where>
+            and `USER_ID` = #{_parameter}
+        </where>
+    </delete>
+
+
+
+    <update id="update" parameterType="com.newly.vas.business.userInfo.bean.UserInfoDO">
+        update VAS_USER_INFO
+        <trim prefix="set" suffixOverrides=",">
+            <if test="id != null">`ID` = #{id},</if>
+            <if test="deptId != null">`DEPT_ID` = #{deptId},</if>
+            <if test="createUserId != null">`CREATE_USER_ID` = #{createUserId},</if>
+            <if test="groupId != null">`GROUP_ID` = #{groupId},</if>
+            <if test="name != null">`NAME` = #{name},</if>
+            <if test="realName != null">`REAL_NAME` = #{realName},</if>
+            <if test="wxName != null">`WX_NAME` = #{wxName},</if>
+            <if test="nickName != null">`NICK_NAME` = #{nickName},</if>
+            <if test="password != null">`PASSWORD` = #{password},</if>
+            <if test="phone != null">`PHONE` = #{phone},</if>
+            <if test="email != null">`EMAIL` = #{email},</if>
+            <if test="idCard != null">`ID_CARD` = #{idCard},</if>
+            <if test="image != null">`IMAGE` = #{image},</if>
+            <if test="headerImg != null">`HEADER_IMG` = #{headerImg},</if>
+            <if test="type != null">`TYPE` = #{type},</if>
+            <if test="loginTimes != null">`LOGIN_TIMES` = #{loginTimes},</if>
+            <if test="lastLoginIp != null">`LAST_LOGIN_IP` = #{lastLoginIp},</if>
+            <if test="lastLoginTime != null">`LAST_LOGIN_TIME` = #{lastLoginTime},</if>
+            <if test="createTime != null">`CREATE_TIME` = now()</if>
+            <if test="updateTime != null">`UPDATE_TIME` = now()</if>
+            <if test="remark != null">`REMARK` = #{remark},</if>
+
+        </trim>
+        <where>
+            and `ID` = #{id}
+        </where>
+    </update>
+
+    <update id="updateLoginInfo" parameterType="com.newly.vas.business.userInfo.bean.UserInfoDO">
+        update VAS_USER_INFO set LOGIN_TIMES = #{loginTimes, jdbcType=INTEGER},
+        LAST_LOGIN_TIME = now()
+        where id = #{id}
+    </update>
+
+    <update id="changePassword">
+        update VAS_USER_INFO
+        set PASSWORD = #{password}
+        <where>
+            and `NAME` = #{name}
+        </where>
+    </update>
+
+    <delete id="delete" parameterType="java.lang.String">
+        delete from VAS_USER_INFO
+        <where>
+            and `ID` = #{_parameter}
+        </where>
+    </delete>
+
+    <update id="batchChangePassword">
+        update VAS_USER_INFO
+        set PASSWORD = #{password}
+        where ID in
+        <foreach collection="userIds" open="(" close=")" item="item" separator=",">
+            #{item}
+        </foreach>
+    </update>
+
+    <update id="batchMove">
+        update VAS_USER_INFO
+        set DEPT_ID = #{deptId}
+        where ID in
+        <foreach collection="userIds" open="(" close=")" item="item" separator=",">
+            #{item}
+        </foreach>
+    </update>
+
+    <delete id="batchDelete">
+        delete from VAS_USER_INFO where ID in
+        <foreach collection="userIds" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <select id="getById" parameterType="java.lang.String" resultMap="userInfoMapper">
+        select <include refid="Base_Column_List"/>
+        from
+            VAS_USER_INFO
+        <where>
+            and `ID` = #{_parameter}
+        </where>
+    </select>
+
+
+    <select id="getByName" parameterType="java.lang.String" resultMap="userInfoMapper">
+        select <include refid="Base_Column_List"/>,USER_CODE,ISZUHU
+        from
+        VAS_USER_INFO
+        where binary `NAME` = #{name}
+    </select>
+
+    <select id="getUserAndDept" parameterType="string" resultMap="userInfoMapper">
+        select
+        <include refid="User_Column_List"/>,  d.NAME as DEPT_NAME
+        from VAS_USER_INFO u, VAS_DEPARTMENT d
+        where u.DEPT_ID=d.ID and u.ID = #{userId}
+    </select>
+
+    <select id="getByPhone" parameterType="java.lang.String" resultMap="userInfoMapper">
+        select <include refid="Base_Column_List"/>
+        from
+        VAS_USER_INFO
+        where `PHONE` = #{phone}
+    </select>
+
+    <select id="getListByMap" parameterType="java.util.Map" resultMap="userInfoMapper">
+        select <include refid="User_Column_List"/> ,d.NAME as DEPT_NAME
+        from  VAS_USER_INFO u
+        join VAS_DEPARTMENT d on u.DEPT_ID=d.ID
+        <where>
+            <if test="deptIds != null and deptIds != ''"> and DEPT_ID in
+                <foreach collection="deptIds" item="item" open="(" close=")" separator=",">
+                    '${item}'
+                </foreach>
+            </if>
+            <if test="createUserId != null and createUserId != ''"> and u.CREATE_USER_ID = #{createUserId} </if>
+            <if test="createTime != null and createTime != ''"> and u.CREATE_TIME = #{createTime} </if>
+            <if test="updateTime != null and updateTime != ''"> and u.UPDATE_TIME = #{updateTime} </if>
+            <if test="loginTimes != null and loginTimes != ''"> and u.LOGIN_TIMES = #{loginTimes} </if>
+            <if test="lastLoginTime != null and lastLoginTime != ''"> and u.LAST_LOGIN_TIME = #{lastLoginTime} </if>
+            <if test="searchInfo != null and searchInfo != ''"> and (u.NAME like CONCAT('%','${searchInfo}','%' )
+                or u.REAL_NAME like CONCAT('%','${searchInfo}','%' ))
+            </if>
+            and  u.USER_CODE=#{userCode}
+        </where>
+    </select>
+
+    <select id="getPageList" parameterType="java.util.Map" resultMap="userInfoMapper">
+        select
+            `ID`,`GROUP_ID`,`NAME`,`WX_NAME`,`NICK_NAME`,`PASSWORD`,`PHONE`,`EMAIL`,`ID_CARD`,`IMAGE`,`HEADER_IMG`,`TYPE`,`LOGIN_TIMES`,`LAST_LOGIN_IP`,`LAST_LOGIN_TIME`,`CREATE_TIME`,`UPDATE_TIME`,`REMARK`
+        from
+            VAS_USER_INFO
+        <where>
+            <if test="id != null and id != ''"> and `ID` = #{id} </if>
+            <if test="groupId != null and groupId != ''"> and `GROUP_ID` = #{groupId} </if>
+            <if test="createUserId != null and createUserId != ''"> and u.CREATE_USER_ID = #{createUserId} </if>
+            <if test="deptId != null and deptId != ''"> and u.DEPT_ID = #{deptId} </if>
+            <if test="name != null and name != ''"> and `NAME` = #{name} </if>
+            <if test="wxName != null and wxName != ''"> and `WX_NAME` = #{wxName} </if>
+            <if test="nickName != null and nickName != ''"> and `NICK_NAME` = #{nickName} </if>
+            <if test="password != null and password != ''"> and `PASSWORD` = #{password} </if>
+            <if test="phone != null and phone != ''"> and `PHONE` = #{phone} </if>
+            <if test="email != null and email != ''"> and `EMAIL` = #{email} </if>
+            <if test="idCard != null and idCard != ''"> and `ID_CARD` = #{idCard} </if>
+            <if test="image != null and image != ''"> and `IMAGE` = #{image} </if>
+            <if test="headerImg != null and headerImg != ''"> and `HEADER_IMG` = #{headerImg} </if>
+            <if test="type != null and type != ''"> and `TYPE` = #{type} </if>
+            <if test="loginTimes != null and loginTimes != ''"> and `LOGIN_TIMES` = #{loginTimes} </if>
+            <if test="lastLoginIp != null and lastLoginIp != ''"> and `LAST_LOGIN_IP` = #{lastLoginIp} </if>
+            <if test="lastLoginTime != null and lastLoginTime != ''"> and `LAST_LOGIN_TIME` = #{lastLoginTime} </if>
+            <if test="createTime != null and createTime != ''"> and `CREATE_TIME` = #{createTime} </if>
+            <if test="updateTime != null and updateTime != ''"> and `UPDATE_TIME` = #{updateTime} </if>
+            <if test="remark != null and remark != ''"> and `REMARK` = #{remark} </if>
+
+        </where>
+        order by ${orderBy} ${orderType}
+        limit ${offset},${pageSize}
+    </select>
+
+    <select id="getPageCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select
+            count(*)
+        from
+            VAS_USER_INFO
+        <where>
+            <if test="id != null and id != ''"> and `ID` = #{id} </if>
+            <if test="groupId != null and groupId != ''"> and `GROUP_ID` = #{groupId} </if>
+            <if test="createUserId != null and createUserId != ''"> and u.CREATE_USER_ID = #{createUserId} </if>
+            <if test="name != null and name != ''"> and `NAME` = #{name} </if>
+            <if test="deptId != null and deptId != ''"> and u.DEPT_ID = #{deptId} </if>
+            <if test="wxName != null and wxName != ''"> and `WX_NAME` = #{wxName} </if>
+            <if test="nickName != null and nickName != ''"> and `NICK_NAME` = #{nickName} </if>
+            <if test="password != null and password != ''"> and `PASSWORD` = #{password} </if>
+            <if test="phone != null and phone != ''"> and `PHONE` = #{phone} </if>
+            <if test="email != null and email != ''"> and `EMAIL` = #{email} </if>
+            <if test="idCard != null and idCard != ''"> and `ID_CARD` = #{idCard} </if>
+            <if test="image != null and image != ''"> and `IMAGE` = #{image} </if>
+            <if test="headerImg != null and headerImg != ''"> and `HEADER_IMG` = #{headerImg} </if>
+            <if test="type != null and type != ''"> and `TYPE` = #{type} </if>
+            <if test="loginTimes != null and loginTimes != ''"> and `LOGIN_TIMES` = #{loginTimes} </if>
+            <if test="lastLoginIp != null and lastLoginIp != ''"> and `LAST_LOGIN_IP` = #{lastLoginIp} </if>
+            <if test="lastLoginTime != null and lastLoginTime != ''"> and `LAST_LOGIN_TIME` = #{lastLoginTime} </if>
+            <if test="createTime != null and createTime != ''"> and `CREATE_TIME` = #{createTime} </if>
+            <if test="updateTime != null and updateTime != ''"> and `UPDATE_TIME` = #{updateTime} </if>
+            <if test="remark != null and remark != ''"> and `REMARK` = #{remark} </if>
+
+        </where>
+    </select>
+
+    <select id="getUserCodeName" parameterType="java.lang.String" resultType="java.lang.String">
+        select user_code_name from vas_user_code where user_code=#{userCode}
+    </select>
+
+    <select id="getAllUserCode" resultType="java.lang.String">
+        select c.user_code from vas_user_code c
+    </select>
+    
+</mapper>

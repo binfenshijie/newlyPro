@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="start" />
+        <module name="vas-api" />
+        <module name="vas-base" />
+        <module name="vas-business" />
+        <module name="vas-provider" />
+        <module name="vas-reference" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="start" target="1.8" />
+      <module name="vas-api" target="1.8" />
+      <module name="vas-base" target="1.8" />
+      <module name="vas-business" target="1.8" />
+      <module name="vas-provider" target="1.8" />
+      <module name="vas-reference" target="1.8" />
+      <module name="vas-server" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

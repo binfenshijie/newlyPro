@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.newly.vas.business.deptInfo.mapper.DepartInfoMapper">
+    <resultMap id="deptResultMap" type="com.newly.vas.business.deptInfo.bean.DepartInfoDO">
+        <id column="ID" jdbcType="VARCHAR" property="id"/>
+        <result column="NAME" jdbcType="VARCHAR" property="name"/>
+        <result column="DEPT_CODE" jdbcType="VARCHAR" property="deptCode"/>
+        <result column="PARENT_ID" jdbcType="VARCHAR" property="parentId"/>
+        <result column="SHORT_LETTER" jdbcType="VARCHAR" property="shortLetter"/>
+        <result column="CREATE_USER_ID" jdbcType="VARCHAR" property="createUserId"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="REMARK" jdbcType="VARCHAR" property="remark"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        ID, NAME, DEPT_CODE, PARENT_ID, SHORT_LETTER, CREATE_USER_ID, CREATE_TIME, UPDATE_TIME, REMARK
+    </sql>
+
+    <sql id="Dept_Column_List">
+        d.ID, d.NAME, d.DEPT_CODE, d.PARENT_ID, d.SHORT_LETTER, d.CREATE_USER_ID, d.CREATE_TIME, d.UPDATE_TIME, d.REMARK
+    </sql>
+
+    <insert id="save" parameterType="com.newly.vas.business.deptInfo.bean.DepartInfoDO">
+        insert into vas_department (<include refid="Base_Column_List"/>,USER_CODE)
+        values (
+        #{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
+        #{deptCode,jdbcType=VARCHAR}, #{parentId,jdbcType=VARCHAR},
+        #{shortLetter,jdbcType=VARCHAR}, #{createUserId,jdbcType=VARCHAR},
+        now(), now(),
+        #{remark,jdbcType=VARCHAR},#{userCode})
+    </insert>
+
+    <update id="update" parameterType="com.newly.vas.business.deptInfo.bean.DepartInfoDO">
+        update vas_department
+        <trim prefix="set" suffixOverrides=",">
+            <if test="name != null">
+                NAME = #{name, jdbcType=VARCHAR},
+            </if>
+            <if test="deptCode != null">
+                DEPT_CODE = #{deptCode, jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                REMARK = #{remark, jdbcType=VARCHAR},
+            </if>
+            UPDATE_TIME = now(),
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.String">
+        delete from vas_department
+         where id = #{_parameter}
+    </delete>
+
+    <select id="getById" parameterType="java.lang.String" resultMap="deptResultMap">
+        select <include refid="Base_Column_List" />
+        from
+        vas_department
+        where id = #{_parameter}
+    </select>
+
+    <select id="getByNameOrDeptCode" parameterType="java.lang.String" resultMap="deptResultMap">
+        select *
+        from
+        vas_department
+        where  NAME like CONCAT('%','${_parameter}','%' )
+         or DEPT_CODE like CONCAT('%','${_parameter}','%' )
+    </select>
+
+
+    <select id="getChildrenDept" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT getChildrenDept(#{deptId})
+    </select>
+
+    <select id="getListByMap" parameterType="java.util.Map" resultMap="deptResultMap">
+        select <include refid="Base_Column_List"/>,ISPARENT,USER_CODE
+        from
+        vas_department
+        <where>
+            <if test="id != null and id != ''"> and ID = #{id} </if>
+            <if test="name != null and name != ''"> and NAME = #{name} </if>
+            <if test="deptCode != null and deptCode != ''"> and DEPT_CODE = #{deptCode} </if>
+            <if test="parentId != null and parentId != ''"> and PARENT_ID = #{parentId} </if>
+            <if test="shortLetter != null and shortLetter != ''"> and SHORT_LETTER = #{shortLetter} </if>
+            <if test="createUserId != null and createUserId != ''"> and CREATE_USER_ID = #{createUserId} </if>
+            <if test="createTime != null and createTime != ''"> and CREATE_TIME = #{createTime} </if>
+            <if test="updateTime != null and updateTime != ''"> and UPDATE_TIME = #{updateTime} </if>
+            <if test="remark != null and remark != ''"> and REMARK = #{remark} </if>
+        </where>
+    </select>
+
+    <select id="getUserCode" parameterType="java.lang.String" resultMap="deptResultMap">
+        select <include refid="Base_Column_List"/>,ISPARENT,USER_CODE
+        from
+        vas_department
+        where USER_CODE=#{userCode}
+    </select>
+
+    <select id="getCount" parameterType="java.lang.String" resultType="int">
+        SELECT count(*) FROM `vas_department` where name=#{name}
+    </select>
+
+
+    <insert id="saveParent" parameterType="com.newly.vas.business.deptInfo.bean.DeptParentDTO">
+        INSERT into vas_department (id,name,DEPT_CODE,PARENT_ID,CREATE_USER_ID,CREATE_TIME,UPDATE_TIME,REMARK,USER_CODE,ISPARENT)
+        values(#{deptId},#{name},#{deptCode},#{parentId},#{createUserId},now(),now(),#{remark},#{userCode},'0')
+    </insert>
+
+    <select id="getUserTree" parameterType="java.lang.String" resultType="com.newly.vas.business.deptInfo.bean.UserTree">
+        select iszuhu iszuhu,user_code userCode from vas_user_info where id=#{userId}
+    </select>
+
+    <select id="getDeptId" parameterType="java.lang.String" resultType="java.lang.String">
+        select id from vas_department where isparent='0' and user_code=#{userCode}
+    </select>
+</mapper>

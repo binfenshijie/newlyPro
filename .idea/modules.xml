@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/start/start.iml" filepath="$PROJECT_DIR$/start/start.iml" />
+      <module fileurl="file://$PROJECT_DIR$/vas-api/vas-api.iml" filepath="$PROJECT_DIR$/vas-api/vas-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/vas-base/vas-base.iml" filepath="$PROJECT_DIR$/vas-base/vas-base.iml" />
+      <module fileurl="file://$PROJECT_DIR$/vas-business/vas-business.iml" filepath="$PROJECT_DIR$/vas-business/vas-business.iml" />
+      <module fileurl="file://$PROJECT_DIR$/vas-provider/vas-provider.iml" filepath="$PROJECT_DIR$/vas-provider/vas-provider.iml" />
+      <module fileurl="file://$PROJECT_DIR$/vas-reference/vas-reference.iml" filepath="$PROJECT_DIR$/vas-reference/vas-reference.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/vas-server.iml" filepath="$PROJECT_DIR$/.idea/vas-server.iml" />
+    </modules>
+  </component>
+</project>

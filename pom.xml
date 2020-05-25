@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <parent>
+    <groupId>com.qiniu</groupId>
+    <artifactId>qiniu-dependencies</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+
+  <groupId>com.newly.vas</groupId>
+  <artifactId>vas-server</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <description>newly quick springCloud project</description>
+
+  <modelVersion>4.0.0</modelVersion>
+  <modules>
+    <module>vas-api</module>
+    <module>vas-base</module>
+    <module>vas-business</module>
+    <module>vas-reference</module>
+    <module>vas-provider</module>
+    <module>start</module>
+  </modules>
+
+  <properties>
+    <json-lib.version>2.4</json-lib.version>
+  </properties>
+
+
+  <dependencies>
+    <dependency>
+      <groupId>net.sf.json-lib</groupId>
+      <artifactId>json-lib</artifactId>
+      <classifier>jdk15</classifier>
+      <version>${json-lib.version}</version>
+    </dependency>
+
+<!--    <dependency>
+      <groupId>com.newly</groupId>
+      <artifactId>qiniu-java-sdk</artifactId>
+      <version>7.2.25</version>
+      <optional>true</optional>
+      <exclusions>
+        <exclusion>
+          <groupId>com.newly</groupId>
+          <artifactId>qiniu-java-sdk</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>-->
+
+  </dependencies>
+
+</project>
