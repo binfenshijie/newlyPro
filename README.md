@@ -1,2 +1,0 @@
-# newlyPro
-learn for future
